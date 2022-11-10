@@ -28,7 +28,7 @@ variable "az_count" {
 }
 
 variable "tags" {
-    description = "Tags which get applied to all reasources."
+    description = "Tags which get applied to all resources."
     type = map(string)
     default = {}
 }
@@ -61,18 +61,18 @@ locals {
         var.tags
     )
 
-    vpc_cidr_mask_bits = split(var.vpc_cidr, "/")[1]
+    vpc_cidr_mask_bits = split("/", var.vpc_cidr)[1]
 
     private_subnets_newbits_unlimited = (32 - local.vpc_cidr_mask_bits) - floor(
         (
             32 - local.vpc_cidr_mask_bits
         ) / (
-            split(var.private_public_subnet_mask_ratio, ":")[
+            split(":", var.private_public_subnet_mask_ratio)[
                 0
-            ] + split(var.private_public_subnet_mask_ratio, ":")[
+            ] + split(":", var.private_public_subnet_mask_ratio)[
                 1
             ]
-        ) * split(var.private_public_subnet_mask_ratio, ":")[0]
+        ) * split(":", var.private_public_subnet_mask_ratio)[0]
     )
 
 
@@ -80,12 +80,12 @@ locals {
         (
             32 - local.vpc_cidr_mask_bits
         ) / (
-            split(var.private_public_subnet_mask_ratio, ":")[
+            split(":", var.private_public_subnet_mask_ratio)[
                 0
-            ] + split(var.private_public_subnet_mask_ratio, ":")[
+            ] + split(":", var.private_public_subnet_mask_ratio)[
                 1
             ]
-        ) * split(var.private_public_subnet_mask_ratio, ":")[1]
+        ) * split(":", var.private_public_subnet_mask_ratio)[1]
     )
 
     private_subnets_newbits = local.private_subnets_newbits_unlimited - (
@@ -217,7 +217,7 @@ resource "aws_iam_role" "corosync" {
 
 resource "aws_iam_role_policy_attachment" "ssm" {
     role = aws_iam_role.corosync.name
-    policy = "AmazonSSMManagedInstanceCore"
+    policy_arn = "AmazonSSMManagedInstanceCore"
 }
 
 resource "aws_security_group" "corosync" {
